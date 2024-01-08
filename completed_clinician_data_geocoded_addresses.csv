@@ -1,0 +1,11 @@
+id,rank,address,type,street,house_number,postal_code,state_code,country_code,district,city,county,state,country,score,access,geometry
+1,1,"550 Peachtree St NE, Atlanta, GA 30308-2210, United States",houseNumber,Peachtree St NE,550,30308-2210,GA,USA,Downtown Atlanta,Atlanta,Fulton,Georgia,United States,1,POINT (-84.38514 33.76957),"c(-84.38546, 33.7696)"
+1,1,"1400 NW 12th Ave, Miami, FL 33136-1003, United States",houseNumber,NW 12th Ave,1400,33136-1003,FL,USA,Allapattah,Miami,Miami-Dade,Florida,United States,1,POINT (-80.2155 25.78861),"c(-80.21564, 25.78835)"
+1,1,"818 Ellicott St, Buffalo, NY 14203-1021, United States",houseNumber,Ellicott St,818,14203-1021,NY,USA,Buffalo Niagara Medical Campus,Buffalo,Erie,New York,United States,1,POINT (-78.86756 42.90054),"c(-78.86781, 42.90083)"
+1,1,"5323 Harry Hines Blvd, Dallas, TX 75390-7201, United States",houseNumber,Harry Hines Blvd,5323,75390-7201,TX,USA,Northwest Dallas/Love Field,Dallas,Dallas,Texas,United States,1,POINT (-96.83883 32.81275),"c(-96.83885, 32.81276)"
+1,1,"250 San Jose St, Salinas, CA 93901-3901, United States",houseNumber,San Jose St,250,93901-3901,CA,USA,NA,Salinas,Monterey,California,United States,1,POINT (-121.646 36.6582),"c(-121.64611, 36.65797)"
+1,1,"400 International Dr, Buffalo, NY 14221-5771, United States",houseNumber,International Dr,400,14221-5771,NY,USA,NA,Buffalo,Erie,New York,United States,0.99,POINT (-78.73061 42.97506),"c(-78.73053, 42.97499)"
+1,1,"111 Broadway, New York, NY 10006-0014, United States",houseNumber,Broadway,111,10006-0014,NY,USA,Financial District,New York,New York,New York,United States,1,POINT (-74.01112 40.70846),"c(-74.01125, 40.70852)"
+1,1,"300 Community Dr, Manhasset, NY 11030-3816, United States",houseNumber,Community Dr,300,11030-3816,NY,USA,Manhasset,Manhasset,Nassau,New York,United States,1,POINT (-73.70142 40.777),"c(-73.70142, 40.77707)"
+1,1,"415 N 9th St, Springfield, IL 62702-5303, United States",houseNumber,N 9th St,415,62702-5303,IL,USA,Downtown Springfield,Springfield,Sangamon,Illinois,United States,1,POINT (-89.6435 39.80515),"c(-89.64361, 39.80515)"
+1,1,"1650 Response Rd, Sacramento, CA 95815-4807, United States",houseNumber,Response Rd,1650,95815-4807,CA,USA,Point West,Sacramento,Sacramento,California,United States,1,POINT (-121.43 38.59674),"c(-121.43018, 38.59648)"

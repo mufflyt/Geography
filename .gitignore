@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.shp
+.html
+data/shp/block-groups/US_blck_grp_2021.shp
+data/*
+figures/*
