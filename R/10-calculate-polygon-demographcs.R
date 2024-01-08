@@ -1,53 +1,12 @@
-# Calculate number and pct of people within drive time polygons and outside
-# For bordering polygons, asign population proportionally using calculated overlap field
-
 #######################
 source("R/01-setup.R")
 #######################
 
-# bg_overlap <- read.csv("data/09-get-census-population/block-group-isochrone-overlap.csv", colClasses = c("geoid" = "character"))
-#
-# #done in exploratory.io
-# table_of_women_for_map <- read_csv("data/09-get-census-population/table_of_women_for_map.csv") %>% select(-NAME)
-#
-# demographics <- read_csv("data/09-get-census-population/trying_to_make_demographics_bg.csv") %>%
-#   separate(NAME, into = c("block_group", "tract", "county", "fips_state"), sep = ";", remove = FALSE) %>%
-#   left_join(table_of_women_for_map, by = "GEOID") %>%
-#   rename(population = race_universe_number)
-# write_csv(demographics, "data/10-calculate-polygon-demographics/demographics.csv")
-
-#View(demographics)
+#The code provided aims to report various demographic statistics related to different population groups within the context of the isochrones created for accessibility analysis. It begins by reading in necessary data files, such as regions, state FIPS codes, and precomputed summary statistics for specific population groups within the isochrones. It then proceeds to generate a series of informative messages, each highlighting different aspects of the population covered by the isochrones. These messages include information about the total female population, the number of women from different racial and ethnic backgrounds, and the degree of coverage within the isochrones for each group. The code uses formatted and rounded numbers to present this information in a human-readable format. 
 
 regions <- read.csv("data/fips-appalachia-delta.csv", colClasses = c("fips_county" = "character"))
 state_fips <- read.csv("data/fips-states.csv", colClasses = "character")
 state_fips <- state_fips %>% select(fips_state, state_code)
-
-###########################################################################
-# Join files
-###########################################################################
-# bg_full <- full_join(demographics, bg_overlap, by = c("GEOID" = "geoid"))
-#
-# # nonmatch
-# nonmatch <- bg_full %>% filter(is.na(fips_state))
-# summary(nonmatch$population)
-#
-# # A couple blocks have nonzero population, investigate further
-# nonmatch_check <- nonmatch %>% filter(population > 0)
-#
-# # Actual join to use
-# bg <- left_join(bg_overlap, demographics, by = c("geoid" = "GEOID")) %>%
-#   impute_na(overlap, type = "value", val = 0) %>%
-#   mutate(state_code = str_sub(geoid,1 ,2))
-#
-# colnames(bg)
-# bg <- bg %>% select(fips_state, state_code, geoid, everything())
-# head(bg)
-#
-# write_csv(bg, "data/10-calculate-polygon-demographics/bg.csv")
-
-###########################################################################
-# Calculate population in/out of isochrones by state
-###########################################################################
 
 # Jesus I did this in exploratory and it just works
 state_sums <- read_csv("data/08.5-prep-the-census-variables/end_state_sums.csv")
@@ -120,16 +79,16 @@ paste0("population_hispanic ", format_and_round(state_sums$population_hispanic),
 # write.csv(state_table, "data/state-stroke-access.csv", na = "", row.names = F)
 
 # Chart data
-state_chart <- state_table %>% filter(race == "Total" & state_code != "NY") %>%
-  arrange(within_any)
-
-# Add names
-state_names <- read.csv("data/fips-states.csv", colClasses = "character")
-state_names <- state_names %>% select(state_name, state_code)
-state_chart <- left_join(state_chart, state_names, by = "state_code")
-state_chart <- state_chart %>% select(state_name, within_none, within_primaryacute_only, within_compthromb)
-
-write.csv(state_chart, "data/state-stroke-chart.csv", na = "", row.names = F)
+# state_chart <- state_table %>% filter(race == "Total" & state_code != "NY") %>%
+#   arrange(within_any)
+# 
+# # Add names
+# state_names <- read.csv("data/fips-states.csv", colClasses = "character")
+# state_names <- state_names %>% select(state_name, state_code)
+# state_chart <- left_join(state_chart, state_names, by = "state_code")
+# state_chart <- state_chart %>% select(state_name, within_none, within_primaryacute_only, within_compthromb)
+# 
+# write.csv(state_chart, "data/state-stroke-chart.csv", na = "", row.names = F)
 #
 # ###########################################################################
 # # Calculate population in/out of isochrones by region

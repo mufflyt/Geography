@@ -2,6 +2,7 @@
 source("R/01-setup.R")
 #######################
 # TODO: get block variables for non-decennial census years.
+# This code is focused on retrieving and preparing census variables for analysis. It starts by loading demographic and housing characteristic variables for the 2020 decennial census. The code filters and cleans these variables to include only the data related to females, excluding males and irrelevant annotations, and then writes the cleaned data to a CSV file. It also extracts ACS (American Community Survey) variables for 2020, specifically targeting variables related to population demographics. The code selects and stores these variables in a data frame and saves them as a CSV file. Overall, the code prepares demographic data for further analysis, focusing on gender and race-related variables.
 
 #************************************
 # GET THE DECENNIAL CENSUS VARIABLES
@@ -158,23 +159,7 @@ vars_acs <- tidycensus::load_variables(year = 2020, "acs5")
    write_csv(acs_totals_variables_prepped, "data/08.5-prep-the-census-variables/end_acs_totals_census_variables_prepped.csv"); head(acs_totals_variables_prepped)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# TRASH
  #,
    # paste0("B01001F_0", 17:31, "E"),
    # paste0("B01001G_0", 17:31, "E"),

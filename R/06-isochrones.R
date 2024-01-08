@@ -1,10 +1,8 @@
-########################################################
-#######################################################
-# `created_isochrones` is what is created after the geocoded data is sent to the HERE API.
-
 #######################
 source("R/01-setup.R")
 #######################
+# This code performs a series of data processing and spatial analysis tasks using R and the tidyverse packages. It starts by reading a CSV file named "end_inner_join_postmastr_clinician_data.csv" into the `input_file` data frame and adds a unique identifier column "id" to it. Rows with a specific condition in the "postmastr.name.x" column are filtered out. Then, it keeps only distinct rows based on the "here.address" column and additional filtering criteria involving "postmastr.pm.state" and "postmastr.pm.city."  After preprocessing, the code performs isochrone testing using the "test_and_process_isochrones" function and stores potential errors in the "errors" object. It then filters out rows that are expected to produce errors, creating "input_file_no_error_rows." Next, the code generates isochrones using an external API, and it needs to save them. However, there seems to be a TODO comment indicating that the "process_and_save_isochrones" function needs modification for specifying the save path. The dimensions and class of the resulting isochrones data are checked, and there's a comment that mentions this step takes approximately 15 minutes.Following this, the code reads the isochrones data from a file, arranges it, and clips it to the borders of the USA. The clipped isochrones are validated, and any invalid geometries are corrected. Finally, the clipped isochrones are written to an ESRI Shapefile format in the specified directory. This code is part of a larger data processing and spatial analysis workflow and is designed to handle geographical data, isochrone calculations, and data validation.
+
 
 # Validate the file of geocoded data.
 
@@ -14,8 +12,11 @@ input_file <- readr::read_csv("data/05-geocode-cleaning/end_inner_join_postmastr
   dplyr::mutate(id = row_number()) %>%
   dplyr::filter(postmastr.name.x != "Hye In Park, MD") %>%
   dplyr::distinct(here.address, .keep_all = TRUE) %>%
-  filter(postmastr.pm.state == "CO" & postmastr.pm.city == "AURORA")
+  dplyr::filter(postmastr.pm.state == "CO" & postmastr.pm.city == "AURORA")
 
+#**********************************************
+# TESTING ISOCHRONES WITH A ONE SECOND ISOCHRONE
+#**********************************************
 errors <- test_and_process_isochrones(input_file)
 errors
 
@@ -76,7 +77,6 @@ sf::st_write(
 # SANITY CHECK
 ######################################
 
-#BASIC MAP
 end_isochrones_sf_clipped <- sf::st_read("data/06-isochrones/end_isochrones_sf_clipped") %>%
   dplyr::arrange(desc(rank)) #This is IMPORTANT for the layering.
 

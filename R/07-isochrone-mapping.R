@@ -2,7 +2,6 @@
 source("R/01-setup.R")
 #######################
 
-# FINAL MAP
 # This code performs a spatial join between two sf (Simple Features) data frames, subspecialists_lat_long and isochrones. It starts by creating a copy of subspecialists_lat_long with point geometries and ensures both data frames have the same Coordinate Reference System (CRS). Then, it makes the geometries valid (fixes any invalid geometries) in both data frames. Finally, it uses sf::st_join to join the two data frames based on their spatial relationship, and the left = FALSE argument ensures that it retains the isochrone polygons that intersect with the points in subspecialists_lat_long. The code checks if the number of rows in the result is equal to the number of rows in isochrones to verify if no data was lost during the spatial join.
 
 ACOG_Districts <- tyler::ACOG_Districts
@@ -74,12 +73,8 @@ subspecialists_lat_long_copy <- subspecialists_lat_long %>%
 # Read in shapefile of isochrones
 end_isochrones_sf_clipped <- sf::st_read(
   dsn = "data/06-isochrones/end_isochrones_sf_clipped/isochrones.shp") %>%
-  dplyr::arrange(desc(rank)) #This is IMPORTANT for the layering.
-  #select(departure, arrival, range, name, postal, fips, woe_id, latitude, longitude, geometry) %>%
-  #mutate(range = range/60L) %>%
-  #mutate(range = as.numeric(range)) %>%
-  #mutate(range = factor(range, levels = unique(range)))
-View(end_isochrones_sf_clipped)
+  dplyr::arrange(desc(rank)) #This is IMPORTANT for the layering. 
+#View(end_isochrones_sf_clipped)
 
 # Filter out rows with empty geometries
 end_isochrones_sf_clipped <- end_isochrones_sf_clipped[!sf::st_is_empty(end_isochrones_sf_clipped), ]
@@ -92,7 +87,7 @@ end_isochrones_sf_clipped$range <- as.factor(end_isochrones_sf_clipped$range)
 ggplot() +
   geom_sf(data = end_isochrones_sf_clipped, aes(fill = range)) +
   scale_fill_viridis_d(alpha = 0.2) + # Apply colors
-  labs(title = "End Isochrones SF Clipped")
+  labs(title = "Isochrones SF Clipped TO USA BORDERS")
 
 ##########################################################################
 # Perform a spatial join using st_join
@@ -109,7 +104,6 @@ end_isochrones_sf_clipped <- sf::st_simplify(end_isochrones_sf_clipped, preserve
 # Set the correct CRS for your data
 subspecialists_lat_long_copy <- sf::st_set_crs(subspecialists_lat_long_copy, 4326)  # Assuming EPSG 4326 (WGS 84) for lat/lon
 
-#the polygom file sghould be first
 result <- sf::st_join(end_isochrones_sf_clipped, subspecialists_lat_long_copy, left = FALSE, suffix = c("_subspecialists_lat_long", "_isochrones")) # 'left' argument set to FALSE means you are retaining the isochrone polygons that intersect with the points in subspecialists_lat_long
 
 result <- result %>%
@@ -129,46 +123,17 @@ sf::st_write(result,
              dsn = "data/07-isochrone-mapping",
              layer = "results_simplified_validated_isochrones",
              driver = "ESRI Shapefile",
-             quiet = FALSE, append = FALSE)
+             quiet = FALSE, 
+             append = FALSE)
 
 plot(result[1])
 rm(filtered_result)
 invisible(gc())
 
-#************************************
-# SANITY CHECK
-#************************************
-#Now join information from the gyn_onc dataframe to the isochrones for later use.  After joining, it calculates the drive_time in minutes and reorders the columns. Finally, it saves the joined and modified isochrones data as an RDS file with a timestamp in the filename.
-#```{r isochrones_save, eval = TRUE, include=TRUE}
-# Add characteristics to isochrones file, save out
-# Want to join a plain data frame to the isochrones, not an sf object
-# gyn_onc <- subspecialists_lat_long_copy
-# gyn_onc_physicians_df <- as.data.frame(gyn_onc) %>%
-#   dplyr::select(-geometry)
-#
-# isochrones <- result
-#
-# isochrones_data <- dplyr::left_join(isochrones, gyn_onc_physicians_df, by = c("address" = "address"))
-#
-# isochrones_data <- isochrones_data %>%
-#   dplyr::select(range, everything()) %>%
-#   dplyr::arrange(desc(rank)) #This is IMPORTANT for the layering.
-#
-# readr::write_rds(isochrones_data, paste("data/isochrones_gyn_onc_joined_", format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S"), ".rds", sep = ""))
-# #```
-#
-# #Map the isochrones to make sure they make sense. We should see one isochrone per point.
-# #```{r read_isochrones, echo = FALSE, message = FALSE, warning = FALSE}
-# #isochrones <- isochrones_data %>% filter(NPI_goba.x==1437595840) #for testing
-# end_isochrones_sf_clipped$range <- as.factor(end_isochrones_sf_clipped$range)
-# #```
-
 #*******************************
 # SANITY CHECK
 #*******************************
 
-library(leaflet)
-library(viridis)
 end_isochrones_sf_clipped$range <- as.factor(end_isochrones_sf_clipped$range)
 color_palette <- viridis::magma(length(unique(end_isochrones_sf_clipped$range)))
 isochrone_map <- leaflet() %>%
@@ -218,3 +183,33 @@ htmlwidgets::saveWidget(widget = isochrone_map, file = html_file,
 cat("Leaflet map saved as HTML:", html_file, "\n")
 webshot(html_file, file = png_file)
 cat("Screenshot saved as PNG:", png_file, "\n")
+
+
+#TRASH
+#************************************
+# SANITY CHECK
+#************************************
+#Now join information from the gyn_onc dataframe to the isochrones for later use.  After joining, it calculates the drive_time in minutes and reorders the columns. Finally, it saves the joined and modified isochrones data as an RDS file with a timestamp in the filename.
+#```{r isochrones_save, eval = TRUE, include=TRUE}
+# Add characteristics to isochrones file, save out
+# Want to join a plain data frame to the isochrones, not an sf object
+# gyn_onc <- subspecialists_lat_long_copy
+# gyn_onc_physicians_df <- as.data.frame(gyn_onc) %>%
+#   dplyr::select(-geometry)
+#
+# isochrones <- result
+#
+# isochrones_data <- dplyr::left_join(isochrones, gyn_onc_physicians_df, by = c("address" = "address"))
+#
+# isochrones_data <- isochrones_data %>%
+#   dplyr::select(range, everything()) %>%
+#   dplyr::arrange(desc(rank)) #This is IMPORTANT for the layering.
+#
+# readr::write_rds(isochrones_data, paste("data/isochrones_gyn_onc_joined_", format(Sys.time(), format = "%Y-%m-%d_%H-%M-%S"), ".rds", sep = ""))
+# #```
+#
+# #Map the isochrones to make sure they make sense. We should see one isochrone per point.
+# #```{r read_isochrones, echo = FALSE, message = FALSE, warning = FALSE}
+# #isochrones <- isochrones_data %>% filter(NPI_goba.x==1437595840) #for testing
+# end_isochrones_sf_clipped$range <- as.factor(end_isochrones_sf_clipped$range)
+# #```

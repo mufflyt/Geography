@@ -6,17 +6,35 @@
 source("R/01-setup.R")
 #######################
 
+# Read and Rename Columns: It begins by reading a CSV file that contains information about subspecialists. The code renames specific columns in this dataset to more convenient names.
+# 
+# Filter Rows: Rows in the dataset are filtered to select only those where the National Provider Identifier (NPI) number is missing (NA), indicating subspecialists without NPI numbers. The filtered data is then saved as a new CSV file.
+# 
+# Retrieve NPI Numbers: A custom function (search_and_process_npi) is used to retrieve NPI numbers for the subspecialists who lack them. The retrieved NPI numbers are processed, including removing punctuation, converting credential information to uppercase, and filtering based on specific criteria. The processed NPI data is saved as another CSV file.
+# 
+# Read Original Subspecialty Data: The original dataset containing subspecialist information is read again, and the NPI column is converted to a numeric format.
+# 
+# Coalesce NPI Numbers: The missing NPI numbers in the original subspecialist dataset are filled in (coalesced) with the NPI numbers from the previous step. Unnecessary columns from the NPI dataset are removed.
+# 
+# Combine DataFrames: The code combines the datasets related to NPI numbers and taxonomy information into a single dataset. This merged dataset likely contains comprehensive information about subspecialists, including their NPI numbers and taxonomy data.
+# 
+# Merge Rows: Rows are merged from the taxonomy dataset and the NPI dataset to include younger subspecialists who have a taxonomy code but not board certification yet. Additional data transformations, filtering, and column manipulation are performed during this step.
+# 
+# Save Results: The final merged dataset is saved in RDS (R Data Store) format for further analysis or use in other R scripts.
+
 ### Read in file and clean it up
-filtered_subspecialists <- readr::read_csv("/Users/tylermuffly/Dropbox (Personal)/workforce/Master_References/goba/subspecialists_only.csv") %>%
+# File Provenance: "/Users/tylermuffly/Dropbox (Personal)/workforce/Master_References/goba/subspecialists_only.csv"
+filtered_subspecialists <- readr::read_csv("data/03-search_and_process_npi/subspecialists_only.csv") %>%
   dplyr::rename(first = first_name) %>%
   dplyr::rename(last = last_name) %>%
   dplyr::filter(is.na(NPI)) %>%
-  readr::write_csv("/Users/tylermuffly/Dropbox (Personal)/workforce/Master_References/goba/filtered_subspecialists_only.csv")
+  readr::write_csv("data/03-search_and_process_npi/filtered_subspecialists_only.csv")
 
-
+#**************************
+#* GET NPI NUMBERS for those that do not have any in subspecialists.csv
+#**************************
 ### tyler::search_and_process_npi
-### Get NPI numbers for those that do not have any in subspecialists.csv
-input_file <- "/Users/tylermuffly/Dropbox (Personal)/workforce/Master_References/goba/filtered_subspecialists_only.csv"
+input_file <- "data/03-search_and_process_npi/filtered_subspecialists_only.csv"
 output_result <- search_and_process_npi(input_file) #Runs the function
 
 searched_npi_numbers <- output_result %>%
@@ -34,7 +52,7 @@ searched_npi_numbers <- output_result %>%
 
 
 ### Read in the original subspecialty.csv file
-subspecialists_only <- read_csv("data/subspecialists_only.csv") %>%
+subspecialists_only <- read_csv("data/03-search_and_process_npi/subspecialists_only.csv") %>%
   mutate(NPI = as.numeric(NPI))
 
 class(subspecialists_only$NPI) == class(searched_npi_numbers$npi)
