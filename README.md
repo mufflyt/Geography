@@ -147,3 +147,19 @@ hereR::isoline(
           aggregate = FALSE)
 
 ![image](https://github.com/mufflyt/Geography/assets/44621942/d246f85e-4b77-463e-9cb9-69c0e6623e2e)
+
+
+####
+# Tools
+
+We used github LFS (large file storage).  
+
+```r
+git lfs install
+git config http.postBuffer 524288000
+git lfs track "*.dbf" "*.shp"
+git ls-tree -r -t -l HEAD | sort -k 4 -n -r | head -n 10
+git add .gitattributes
+git commit -m "Track large files with Git LFS"
+git push origin main
+```
