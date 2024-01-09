@@ -152,11 +152,11 @@ hereR::isoline(
 ####
 # Tools
 
-We used github LFS (large file storage).  
-
+We used github LFS (large file storage) mainly for storing shapefiles.  
 ```r
 git lfs install
 git config http.postBuffer 524288000
+git lfs track
 git lfs track "*.dbf" "*.shp"
 git ls-tree -r -t -l HEAD | sort -k 4 -n -r | head -n 10
 git add .gitattributes
